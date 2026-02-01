@@ -59,7 +59,6 @@
       color: var(--accent-yellow);
     }
 
-    /* ─── HERO ─── */
     .hero {
       display: flex;
       flex-direction: column;
@@ -76,7 +75,6 @@
       margin-bottom: 10px;
     }
 
-    /* Fixed Playtest Section Layout */
     .playtest-box {
       margin-top: 40px;
       display: flex;
@@ -102,7 +100,7 @@
       text-transform: uppercase;
       transition: all 0.3s ease;
       display: inline-block;
-      line-height: 1; /* Helps prevent text clipping */
+      line-height: 1; 
     }
 
     .playtest-cta:hover {
@@ -111,7 +109,6 @@
       box-shadow: 0 0 15px var(--accent-yellow);
     }
 
-    /* ─── GAMES SECTION ─── */
     .games-section {
       text-align: center;
       padding: 60px 20px;
@@ -233,7 +230,6 @@
       color: var(--accent-yellow);
     }
 
-    /* ─── DISCLAIMER SECTION ─── */
     .disclaimer-section {
       max-width: 800px;
       margin: 40px auto;
@@ -308,7 +304,6 @@
       color: var(--accent-yellow);
     }
 
-    /* ─── RESPONSIVE ─── */
     @media (max-width: 600px) {
       nav { gap: 15px; flex-wrap: wrap; justify-content: center; padding: 10px; }
       nav a { font-size: 10px; letter-spacing: 1px; }
@@ -324,28 +319,25 @@
   <nav>
     <a href="#about">About</a>
     <a href="#games">Games</a>
-    <a href="#playtest">Playtest</a>
+    <a href="#playtest">Discord</a>
     <a href="#issues">Known Issues</a>
     <a href="#how-its-made">How it's Made</a>
     <a href="#faq">FAQ</a>
     <a href="#contact">Contact</a>
   </nav>
 
-  <!-- HERO -->
   <section class="hero">
     <div style="display:flex; align-items:center; justify-content:center; gap:24px; flex-wrap:wrap;">
       <img src="https://github.com/projectechou/projectecho.github.io/blob/main/echo.png?raw=true" alt="Project Echo Icon" style="width:clamp(60px, 10vw, 100px); height:auto; image-rendering:pixelated;">
       <h1 class="hero-title">Project Echo</h1>
     </div>
     
-    <!-- PLAYTEST SECTION (FIXED GRAPHIC ERROR) -->
     <div id="playtest" class="playtest-box">
       <p class="playtest-subtitle">Help us refine the experience.</p>
       <a href="https://discord.gg/GUyD6R2E48" target="_blank" class="playtest-cta">Join Discord (first 10 people to join gets free playtester!)</a>
     </div>
   </section>
 
-  <!-- INTRO -->
   <section style="text-align:center; padding: 20px 20px 50px; max-width:680px; margin:0 auto;">
     <p style="font-size:13px; color: var(--accent-gray); line-height:2; letter-spacing:1.2px;">
       <span style="color:var(--accent-yellow);">Project Echo</span> is a fanmade port of
