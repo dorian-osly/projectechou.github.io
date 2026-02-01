@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Project Echo</title>
+  <style>
+    @font-face {
+      font-family: 'Determination';
+      src: url('https://raw.githubusercontent.com/projectechou/projectecho.github.io/main/determination.ttf') format('truetype');
+      font-display: swap;
+    }
+
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #000000;
+      --text: #ffffff;
+      --accent-red: #ff0000;
+      --accent-yellow: #ffff00;
+      --accent-gray: #555555;
+      --nav-bg: #2a2a2a;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Determination', monospace;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ─── NAV ─── */
+    nav {
+      background-color: var(--nav-bg);
+      padding: 14px 0;
+      display: flex;
+      justify-content: center;
+      gap: clamp(10px, 3vw, 48px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    nav a {
+      color: var(--text);
+      text-decoration: none;
+      font-size: 15px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    nav a:hover {
+      color: var(--accent-yellow);
+    }
+
+    /* ─── HERO ─── */
+    .hero {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 20px 40px;
+      text-align: center;
+    }
+
+    .hero-title {
+      font-size: clamp(52px, 10vw, 100px);
+      letter-spacing: 6px;
+      line-height: 1.1;
+      margin-bottom: 10px;
+    }
+
+    /* Fixed Playtest Section Layout */
+    .playtest-box {
+      margin-top: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .playtest-subtitle {
+      font-size: 14px; 
+      color: var(--accent-gray); 
+      letter-spacing: 1px;
+    }
+
+    .playtest-cta {
+      padding: 15px 35px;
+      border: 2px solid var(--accent-yellow);
+      background: transparent;
+      color: var(--accent-yellow);
+      text-decoration: none;
+      font-size: 18px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      transition: all 0.3s ease;
+      display: inline-block;
+      line-height: 1; /* Helps prevent text clipping */
+    }
+
+    .playtest-cta:hover {
+      background: var(--accent-yellow);
+      color: var(--bg);
+      box-shadow: 0 0 15px var(--accent-yellow);
+    }
+
+    /* ─── GAMES SECTION ─── */
+    .games-section {
+      text-align: center;
+      padding: 60px 20px;
+    }
+
+    .games-section h2 {
+      font-size: clamp(22px, 4vw, 32px);
+      letter-spacing: 3px;
+      margin-bottom: 36px;
+    }
+
+    .game-cards {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 24px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .game-card {
+      border: 2px solid var(--accent-gray);
+      border-radius: 4px;
+      padding: 20px;
+      width: 280px;
+      background: #111;
+      transition: border-color 0.25s, transform 0.2s;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .game-card:hover {
+      border-color: var(--accent-yellow);
+      transform: translateY(-4px);
+    }
+
+    .game-card img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      border-radius: 2px;
+      margin-bottom: 16px;
+      border: 1px solid #333;
+    }
+
+    .game-card .card-title {
+      font-size: 20px;
+      letter-spacing: 2px;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+
+    .game-card .card-status {
+      font-size: 12px;
+      letter-spacing: 2px;
+      color: var(--accent-yellow);
+      margin-bottom: 4px;
+    }
+
+    .game-card .card-engine {
+      font-size: 11px;
+      color: var(--accent-gray);
+      font-style: italic;
+      letter-spacing: 1px;
+    }
+
+    /* ─── KNOWN ISSUES SECTION ─── */
+    .known-issues {
+      text-align: center;
+      padding: 60px 20px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .known-issues h2 {
+      font-size: clamp(22px, 4vw, 32px);
+      letter-spacing: 3px;
+      margin-bottom: 24px;
+      color: var(--accent-red);
+    }
+
+    .issue-description {
+      font-size: 14px;
+      color: var(--accent-gray);
+      line-height: 1.8;
+      letter-spacing: 1.2px;
+      margin-bottom: 30px;
+    }
+
+    .comparison-container {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .comparison-box {
+      flex: 1;
+      min-width: 300px;
+      border: 1px solid #222;
+      padding: 10px;
+      background: #0a0a0a;
+    }
+
+    .comparison-box img {
+      width: 100%;
+      height: auto;
+      border: 1px solid #444;
+      display: block;
+    }
+
+    .comparison-label {
+      margin-top: 10px;
+      font-size: 12px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--accent-yellow);
+    }
+
+    /* ─── DISCLAIMER SECTION ─── */
+    .disclaimer-section {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+      border: 1px solid #222;
+      background-color: #0a0a0a;
+      border-radius: 4px;
+      text-align: center;
+    }
+
+    .disclaimer-title {
+      color: var(--accent-red);
+      font-size: 14px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .disclaimer-text {
+      font-size: 11px;
+      color: var(--accent-gray);
+      line-height: 1.8;
+      letter-spacing: 1px;
+    }
+
+    /* ─── ABOUT BLURB ─── */
+    .about-section {
+      text-align: center;
+      padding: 70px 20px;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .about-section h2 {
+      font-size: clamp(20px, 3.5vw, 28px);
+      letter-spacing: 3px;
+      margin-bottom: 24px;
+    }
+
+    .about-section p {
+      font-size: 13px;
+      color: var(--accent-gray);
+      line-height: 2;
+      letter-spacing: 1.2px;
+    }
+
+    .about-section p span {
+      color: var(--text);
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      border-top: 1px solid #222;
+      text-align: center;
+      padding: 40px 20px;
+    }
+
+    footer p {
+      font-size: 11px;
+      color: #444;
+      letter-spacing: 2px;
+      line-height: 2;
+    }
+
+    footer a {
+      color: var(--accent-gray);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    footer a:hover {
+      color: var(--accent-yellow);
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 600px) {
+      nav { gap: 15px; flex-wrap: wrap; justify-content: center; padding: 10px; }
+      nav a { font-size: 10px; letter-spacing: 1px; }
+      .game-card { width: 100%; max-width: 320px; }
+      .hero-title { font-size: 40px; }
+      .playtest-cta { font-size: 14px; padding: 10px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="#about">About</a>
+    <a href="#games">Games</a>
+    <a href="#playtest">Playtest</a>
+    <a href="#issues">Known Issues</a>
+    <a href="#how-its-made">How it's Made</a>
+    <a href="#faq">FAQ</a>
+    <a href="#contact">Contact</a>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div style="display:flex; align-items:center; justify-content:center; gap:24px; flex-wrap:wrap;">
+      <img src="https://github.com/projectechou/projectecho.github.io/blob/main/echo.png?raw=true" alt="Project Echo Icon" style="width:clamp(60px, 10vw, 100px); height:auto; image-rendering:pixelated;">
+      <h1 class="hero-title">Project Echo</h1>
+    </div>
+    
+    <!-- PLAYTEST SECTION (FIXED GRAPHIC ERROR) -->
+    <div id="playtest" class="playtest-box">
+      <p class="playtest-subtitle">Help us refine the experience.</p>
+      <a href="https://discord.gg/GUyD6R2E48" target="_blank" class="playtest-cta">Join Discord (first 10 people to join gets free playtester!)</a>
+    </div>
+  </section>
+
+  <!-- INTRO -->
+  <section style="text-align:center; padding: 20px 20px 50px; max-width:680px; margin:0 auto;">
+    <p style="font-size:13px; color: var(--accent-gray); line-height:2; letter-spacing:1.2px;">
+      <span style="color:var(--accent-yellow);">Project Echo</span> is a fanmade port of
+      <span style="color:var(--accent-yellow);">Undertale</span>, <span style="color:var(--accent-yellow);">Deltarune</span>, and <span style="color:var(--accent-yellow);">OneShot</span> —
+      to the Nintendo <span style="color:var(--accent-yellow);">Wii U</span>. 
+    </p>
+  </section>
+
+  <!-- PORTS SECTION -->
+  <section class="games-section" id="games">
+    <h2>Ports</h2>
+    <div class="game-cards">
+      
+      <!-- Undertale -->
+      <div class="game-card">
+        <img src="https://github.com/projectechou/projectecho.github.io/blob/main/undertale.png?raw=true" alt="Undertale">
+        <div class="card-status">In Development</div>
+        <div class="card-title">Undertale</div>
+        <div class="card-engine">Ported using Nintendo Web Framework</div>
+      </div>
+
+      <!-- Deltarune -->
+      <div class="game-card">
+        <img src="https://github.com/projectechou/projectecho.github.io/blob/main/deltarune.jpg?raw=true" alt="Deltarune">
+        <div class="card-status">In Development</div>
+        <div class="card-title">Deltarune</div>
+        <div class="card-engine">Ported using Nintendo Web Framework</div>
+      </div>
+
+      <!-- OneShot -->
+      <div class="game-card">
+        <img src="https://github.com/projectechou/projectecho.github.io/blob/main/oneshot.webp?raw=true" alt="Oneshot">
+        <div class="card-status">Planned</div>
+        <div class="card-title">Oneshot</div>
+        <div class="card-engine">Will be ported using EasyRPG</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- KNOWN ISSUES SECTION -->
+  <section class="known-issues" id="issues">
+    <h2>Known Issues</h2>
+    <p class="issue-description">
+      Please note that the Wii U Emulator <span style="color:var(--text);">Cemu</span> does not display Undertale properly. Due to the way the Nintendo Web Framework renders games, the graphics appear corrupted or invisible in the emulator. However, the game displays perfectly on <span style="color:var(--accent-yellow);">real Wii U hardware</span>.
+    </p>
+    
+    <div class="comparison-container">
+      <div class="comparison-box">
+        <img src="https://github.com/projectechou/projectecho.github.io/blob/main/chrome_gIbVzeiD5i.png?raw=true" alt="Before - Cemu Glitch">
+        <div class="comparison-label">Loading undertale on cemu</div>
+      </div>
+      <div class="comparison-box">
+        <img src="https://github.com/projectechou/projectecho.github.io/blob/main/chrome_XPW1FqhbTi.png?raw=true" alt="After - Real Hardware">
+        <div class="comparison-label">Render glitch. crashes instantly and just shows a white screen</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DISCLAIMER -->
+  <section class="disclaimer-section">
+    <div class="disclaimer-title">Legal Disclaimer</div>
+    <div class="disclaimer-text">
+      The people making this port does not support piracy in any way. In order to patch Project Echo onto your Wii U, you'll need a real copy of Undertale and the data.win file. OneShot does not apply to this because that port is using the 2014 freeware verison.
+    </div>
+  </section>
+
+  <!-- HOW IT'S MADE -->
+  <section id="how-its-made" style="text-align:center; padding:70px 20px; max-width:720px; margin:0 auto;">
+    <h2 style="font-size: clamp(20px, 3.5vw, 28px); letter-spacing:3px; margin-bottom:24px;">How it's Made</h2>
+    <p style="font-size:13px; color:var(--accent-gray); line-height:2; letter-spacing:1.2px;">
+      I use a tool called Nintendo Web Framework to bring Undertale and Deltarune to the Wii U. Because gamemaker lacks a native Wii U port, we instead export undertale to HTML, and then use Nintendo Web Framework to pack it into a Wii U File. OneShot will be based off of the EasyRPG Wii port by cmaster25. You can find their source code here: https://github.com/cmaster25/Oneshot-For-Wii
+    </p>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" style="text-align:center; padding:70px 20px; max-width:720px; margin:0 auto;">
+    <h2 style="font-size: clamp(20px, 3.5vw, 28px); letter-spacing:3px; margin-bottom:36px;">FAQ</h2>
+    <div style="text-align:left; display:flex; flex-direction:column; gap:28px;">
+      <div>
+        <p style="font-size:15px; color:var(--text); letter-spacing:1.5px; margin-bottom:8px;">When will this be complete?</p>
+        <p style="font-size:12px; color:var(--accent-gray); line-height:1.9; letter-spacing:1px;">I don't know. This project has no eta yet - but i believe it will be this year. </p>
+      </div>
+      <div>
+        <p style="font-size:15px; color:var(--text); letter-spacing:1.5px; margin-bottom:8px;">What about fangames (Undertale Yellow, Undertale Plus etc)</p>
+        <p style="font-size:12px; color:var(--accent-gray); line-height:1.9; letter-spacing:1px;">It would require complete recompilation of the NWF software as a whole to add mods and fangames. I'm interested in doing them too - but my focus is on those ports at the moment.</p>
+      </div>
+         <div>
+        <p style="font-size:15px; color:var(--text); letter-spacing:1.5px; margin-bottom:8px;">How can i contact you / help out with the port?</p>
+        <p style="font-size:12px; color:var(--accent-gray); line-height:1.9; letter-spacing:1px;">Join the discord. I plan on recruiting people who's knowledgable in the Wii U Homebrew and GameMaker scene to help. DELTARUNE in particlar has frame rate issues that i need to fix. </p>
+      </div>
+        <div>
+        <p style="font-size:15px; color:var(--text); letter-spacing:1.5px; margin-bottom:8px;">Do you plan on porting other games to the Wii U?</p>
+        <p style="font-size:12px; color:var(--accent-gray); line-height:1.9; letter-spacing:1px;">Absloutely! It may take time, however.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="about-section" id="about">
+    <h2>About Project Echo</h2>
+    <p>
+      <span>Project Echo</span> is a fanmade project that ports
+      <span>Undertale</span>, <span>Deltarune</span>, and <span>Oneshot</span>
+      to the Nintendo Wii U. 
+    </p>
+  </section>
+
+  <!-- FOOTER -->
+  <footer id="contact">
+    <p>
+      <a href="https://www.youtube.com/channel/UC-G4RHK3pCbcdlMhfk7TDGA/" target="_blank">YouTube</a> &nbsp;|&nbsp;
+      <a href="https://discord.gg/GUyD6R2E48" target="_blank">Discord</a> &nbsp;|&nbsp;
+      <a href="https://x.com/venturaacx" target="_blank">Twitter / X</a>
+    </p>
+    <br>
+    <p>©2026 Project Echo — Fan Project. Not affiliated with Toby Fox or Future Cat.</p>
+  </footer>
+
+</body>
+</html>
