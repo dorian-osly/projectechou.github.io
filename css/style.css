@@ -101,6 +101,41 @@
       box-shadow: 0 0 15px var(--accent-yellow);
     }
 
+    .patcher-box {
+      margin-top: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .patcher-subtitle {
+      font-size: 14px; 
+      color: var(--accent-gray); 
+      letter-spacing: 1px;
+    }
+
+    .patcher-cta {
+      padding: 15px 35px;
+      border: 2px solid var(--accent-yellow);
+      background: transparent;
+      color: var(--accent-yellow);
+      text-decoration: none;
+      font-size: 18px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      transition: all 0.3s ease;
+      display: inline-block;
+      line-height: 1; 
+    }
+
+    .patcher-cta:hover {
+      background: var(--accent-yellow);
+      color: var(--bg);
+      box-shadow: 0 0 15px var(--accent-yellow);
+    }
+
+
     .games-section {
       text-align: center;
       padding: 60px 20px;
