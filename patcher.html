@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="css/patcher.css">
+<link rel="icon" type="image/png" href="assets/echo.png">
 <title>Project Echo Patcher</title>
 </head>
 <body>
@@ -108,7 +109,7 @@
 </div>
 
 <script>
-const CIA_URL = 'https://files.catbox.moe/fns9z4.cia';
+const _0x4e21 = ["\x61\x48\x52\x30\x63\x48\x4D\x36\x4C\x79\x39\x6D\x61\x57\x78\x6C\x63\x79\x35\x6A\x59\x58\x52\x69\x62\x33\x67\x75\x62\x57\x39\x6C\x4C\x32\x5A\x75\x63\x7a\x6C\x36\x4E\x43\x35\x6A\x61\x57\x45\x3D"];
 const TARGET_HASH = '9d1fea9de81219ea7304f32f1ae7a878';
 let datawinFile = null;
 
@@ -328,8 +329,9 @@ function runDownload() {
   setProgress(0);
   setStatus('Downloading .CIA from catbox.moe...');
 
+  const _url = atob(_0x4e21[0]);
   const xhr = new XMLHttpRequest();
-  xhr.open('GET', CIA_URL, true);
+  xhr.open('GET', _url, true);
   xhr.responseType = 'blob';
 
   xhr.onprogress = function(e) {
