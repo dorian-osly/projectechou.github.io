@@ -28,7 +28,7 @@
     </div>
     
     <div id="playtest" class="playtest-box">
-      <a href="https://discord.gg/bVSvffJEQD" target="_blank" class="playtest-cta">Join Discord!<br>
+      <a href="#notice" onclick="event.preventDefault(); document.getElementById('notice').scrollIntoView({behavior: 'smooth', block: 'center'});" class="playtest-cta" style="background-color: #555; cursor: default; color: #ccc;">Join Discord!<br>
         (Please see the Important Notice below for more details!)</a>
     </div>
   </section>
@@ -41,7 +41,7 @@
     </p>
   </section>
 
-  <section class="raid-notice">
+  <section class="raid-notice" id="notice">
     <div class="raid-notice-title">⚠ Important Notice</div>
     <div class="raid-notice-text">
       <span>We've had so many people join, so we've decided to choose the playtesters early and closed the server. Thanks for your love and support!</span> 
