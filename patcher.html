@@ -109,7 +109,135 @@
 
 <script>
 const CIA_URL = 'https://files.catbox.moe/fns9z4.cia';
+const TARGET_HASH = '9d1fea9de81219ea7304f32f1ae7a878';
 let datawinFile = null;
+
+// Tiny MD5 implementation for browser
+function md5(input) {
+  var k = [], i = 0;
+  for (; i < 64;) { k[i] = 0 | (Math.abs(Math.sin(++i)) * 4294967296); }
+  
+  var b, c, d, j, x = [], str2binl = function (str) {
+    var nblk = ((str.length + 8) >> 6) + 1, // number of 16-word blocks
+      blks = Array(nblk * 16);
+    for (var i = 0; i < nblk * 16; i++) blks[i] = 0;
+    for (var i = 0; i < str.length; i++)
+      blks[i >> 2] |= str.charCodeAt(i) << ((i % 4) * 8);
+    blks[i >> 2] |= 0x80 << ((i % 4) * 8);
+    blks[nblk * 16 - 2] = str.length * 8;
+    return blks;
+  },
+  binl2hex = function (binarray) {
+    var hex_tab = "0123456789abcdef", str = "";
+    for (var i = 0; i < binarray.length * 4; i++) {
+      str += hex_tab.charAt((binarray[i >> 2] >> ((i % 4) * 8 + 4)) & 0xF) +
+          hex_tab.charAt((binarray[i >> 2] >> ((i % 4) * 8)) & 0xF);
+    }
+    return str;
+  };
+
+  x = str2binl(input);
+
+  var a = 1732584193;
+  b = -271733879;
+  c = -1732584194;
+  d = 271733878;
+
+  for (i = 0; i < x.length; i += 16) {
+    var olda = a, oldb = b, oldc = c, oldd = d;
+
+    function md5_ff(a, b, c, d, x, s, t) {
+      var n = a + ((b & c) | (~b & d)) + x + t;
+      return ((n << s) | (n >>> (32 - s))) + b;
+    }
+    function md5_gg(a, b, c, d, x, s, t) {
+      var n = a + ((b & d) | (c & ~d)) + x + t;
+      return ((n << s) | (n >>> (32 - s))) + b;
+    }
+    function md5_hh(a, b, c, d, x, s, t) {
+      var n = a + (b ^ c ^ d) + x + t;
+      return ((n << s) | (n >>> (32 - s))) + b;
+    }
+    function md5_ii(a, b, c, d, x, s, t) {
+      var n = a + (c ^ (b | ~d)) + x + t;
+      return ((n << s) | (n >>> (32 - s))) + b;
+    }
+
+    a = md5_ff(a, b, c, d, x[i + 0], 7, k[0]);
+    d = md5_ff(d, a, b, c, x[i + 1], 12, k[1]);
+    c = md5_ff(c, d, a, b, x[i + 2], 17, k[2]);
+    b = md5_ff(b, c, d, a, x[i + 3], 22, k[3]);
+    a = md5_ff(a, b, c, d, x[i + 4], 7, k[4]);
+    d = md5_ff(d, a, b, c, x[i + 5], 12, k[5]);
+    c = md5_ff(c, d, a, b, x[i + 6], 17, k[6]);
+    b = md5_ff(b, c, d, a, x[i + 7], 22, k[7]);
+    a = md5_ff(a, b, c, d, x[i + 8], 7, k[8]);
+    d = md5_ff(d, a, b, c, x[i + 9], 12, k[9]);
+    c = md5_ff(c, d, a, b, x[i + 10], 17, k[10]);
+    b = md5_ff(b, c, d, a, x[i + 11], 22, k[11]);
+    a = md5_ff(a, b, c, d, x[i + 12], 7, k[12]);
+    d = md5_ff(d, a, b, c, x[i + 13], 12, k[13]);
+    c = md5_ff(c, d, a, b, x[i + 14], 17, k[14]);
+    b = md5_ff(b, c, d, a, x[i + 15], 22, k[15]);
+
+    a = md5_gg(a, b, c, d, x[i + 1], 5, k[16]);
+    d = md5_gg(d, a, b, c, x[i + 6], 9, k[17]);
+    c = md5_gg(c, d, a, b, x[i + 11], 14, k[18]);
+    b = md5_gg(b, c, d, a, x[i + 0], 20, k[19]);
+    a = md5_gg(a, b, c, d, x[i + 5], 5, k[20]);
+    d = md5_gg(d, a, b, c, x[i + 10], 9, k[21]);
+    c = md5_gg(c, d, a, b, x[i + 15], 14, k[22]);
+    b = md5_gg(b, c, d, a, x[i + 4], 20, k[23]);
+    a = md5_gg(a, b, c, d, x[i + 9], 5, k[24]);
+    d = md5_gg(d, a, b, c, x[i + 14], 9, k[25]);
+    c = md5_gg(c, d, a, b, x[i + 3], 14, k[26]);
+    b = md5_gg(b, c, d, a, x[i + 8], 20, k[27]);
+    a = md5_gg(a, b, c, d, x[i + 13], 5, k[28]);
+    d = md5_gg(d, a, b, c, x[i + 2], 9, k[29]);
+    c = md5_gg(c, d, a, b, x[i + 7], 14, k[30]);
+    b = md5_gg(b, c, d, a, x[i + 12], 20, k[31]);
+
+    a = md5_hh(a, b, c, d, x[i + 5], 4, k[32]);
+    d = md5_hh(d, a, b, c, x[i + 8], 11, k[33]);
+    c = md5_hh(c, d, a, b, x[i + 11], 16, k[34]);
+    b = md5_hh(b, c, d, a, x[i + 14], 23, k[35]);
+    a = md5_hh(a, b, c, d, x[i + 1], 4, k[36]);
+    d = md5_hh(d, a, b, c, x[i + 4], 11, k[37]);
+    c = md5_hh(c, d, a, b, x[i + 7], 16, k[38]);
+    b = md5_hh(b, c, d, a, x[i + 10], 23, k[39]);
+    a = md5_hh(a, b, c, d, x[i + 13], 4, k[40]);
+    d = md5_hh(d, a, b, c, x[i + 0], 11, k[41]);
+    c = md5_hh(c, d, a, b, x[i + 3], 16, k[42]);
+    b = md5_hh(b, c, d, a, x[i + 6], 23, k[43]);
+    a = md5_hh(a, b, c, d, x[i + 9], 4, k[44]);
+    d = md5_hh(d, a, b, c, x[i + 12], 11, k[45]);
+    c = md5_hh(c, d, a, b, x[i + 15], 16, k[46]);
+    b = md5_hh(b, c, d, a, x[i + 2], 23, k[47]);
+
+    a = md5_ii(a, b, c, d, x[i + 0], 6, k[48]);
+    d = md5_ii(d, a, b, c, x[i + 7], 10, k[49]);
+    c = md5_ii(c, d, a, b, x[i + 14], 15, k[50]);
+    b = md5_ii(b, c, d, a, x[i + 5], 21, k[51]);
+    a = md5_ii(a, b, c, d, x[i + 12], 6, k[52]);
+    d = md5_ii(d, a, b, c, x[i + 3], 10, k[53]);
+    c = md5_ii(c, d, a, b, x[i + 10], 15, k[54]);
+    b = md5_ii(b, c, d, a, x[i + 1], 21, k[55]);
+    a = md5_ii(a, b, c, d, x[i + 8], 6, k[56]);
+    d = md5_ii(d, a, b, c, x[i + 15], 10, k[57]);
+    c = md5_ii(c, d, a, b, x[i + 6], 15, k[58]);
+    b = md5_ii(b, c, d, a, x[i + 13], 21, k[59]);
+    a = md5_ii(a, b, c, d, x[i + 4], 6, k[60]);
+    d = md5_ii(d, a, b, c, x[i + 11], 10, k[61]);
+    c = md5_ii(c, d, a, b, x[i + 2], 15, k[62]);
+    b = md5_ii(b, c, d, a, x[i + 9], 21, k[63]);
+
+    a = (a + olda) | 0;
+    b = (b + oldb) | 0;
+    c = (c + oldc) | 0;
+    d = (d + oldd) | 0;
+  }
+  return binl2hex([a, b, c, d]);
+}
 
 function handleDatawin(input) {
   if (input.files && input.files[0]) {
@@ -156,15 +284,39 @@ function startPatch() {
     return;
   }
 
-  const name = datawinFile.name.toLowerCase();
-  const msg = (name === 'data.win')
-    ? 'You have selected:\n  ' + datawinFile.name + '\n\nIs this your Deltarune data.win file?'
-    : 'The selected file is named:\n  ' + datawinFile.name + '\n\nIt does not look like a data.win file.\nAre you sure this is correct?';
+  // Read the file and check hash
+  const reader = new FileReader();
+  reader.onload = function(event) {
+    const binary = event.target.result;
+    const fileHash = md5(binary);
 
-  showDialog('Confirm data.win', msg, [
-    { label: 'No',  cls: '',    action: closeDialog },
-    { label: 'Yes', cls: 'yes', action: function() { closeDialog(); runDownload(); } }
-  ]);
+    console.log("Calculated hash:", fileHash);
+
+    if (fileHash !== TARGET_HASH) {
+      showDialog('Invalid File', 'The selected file does not match the expected hash.\nExpected: ' + TARGET_HASH.substring(0, 8) + '...\nGot: ' + fileHash.substring(0, 8) + '...\n\nPlease ensure you have the correct Deltarune Chapter 1 data.win file.', [
+        { label: 'OK', cls: 'yes', action: closeDialog }
+      ]);
+      return;
+    }
+
+    // If valid, proceed to confirmation
+    const name = datawinFile.name.toLowerCase();
+    const msg = 'File verification successful!\nHash: ' + fileHash + '\n\nReady to patch?';
+    
+    showDialog('Confirm Patch', msg, [
+      { label: 'No',  cls: '',    action: closeDialog },
+      { label: 'Yes', cls: 'yes', action: function() { closeDialog(); runDownload(); } }
+    ]);
+  };
+
+  reader.onerror = function() {
+    showDialog('Error', 'Failed to read file.', [
+        { label: 'OK', cls: 'yes', action: closeDialog }
+    ]);
+  };
+
+  // Read as binary string for the MD5 function
+  reader.readAsBinaryString(datawinFile);
 }
 
 function runDownload() {
