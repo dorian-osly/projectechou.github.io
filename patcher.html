@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Project Echo Patcher</title>
+<style>
+@font-face {
+  font-family: 'Determination';
+  src: url('https://cdn.jsdelivr.net/gh/projectechou/projectechou.github.io@main/determination.ttf') format('truetype');
+  font-display: swap;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: #c8e0ec;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Determination', 'Courier New', monospace;
+}
+
+.window {
+  width: 640px;
+  background: #f0f8fc;
+  border: 2px solid #7ab8d4;
+  box-shadow: 0 4px 24px rgba(0, 80, 140, 0.15);
+  animation: fadeIn .3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.titlebar {
+  background: #c8dcea;
+  border-bottom: 2px solid #7ab8d4;
+  padding: 7px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  user-select: none;
+}
+
+.dots { display: flex; gap: 6px; }
+.dot { width: 12px; height: 12px; border-radius: 50%; }
+.dot-r { background: #ff5f57; }
+.dot-y { background: #febc2e; }
+.dot-g { background: #28c840; }
+
+.titlebar-label {
+  flex: 1;
+  text-align: center;
+  color: #4a7a9a;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+}
+
+.header-img {
+  width: 100%;
+  display: block;
+  border-bottom: 2px solid #7ab8d4;
+}
+
+.version-row {
+  padding: 3px 14px;
+  text-align: right;
+  color: #5a8aaa;
+  font-size: 10px;
+  letter-spacing: 1px;
+  border-bottom: 1px solid #aac8da;
+}
+
+.body { padding: 12px 18px 18px; }
+
+.sep { height: 1px; background: #aac8da; margin: 8px 0; }
+
+.selectors {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0 4px;
+}
+
+.sel-label {
+  color: #0a2030;
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+
+.radio-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 5px 0;
+}
+
+.radio-row.disabled { opacity: 0.35; }
+
+.radio-outer {
+  width: 14px;
+  height: 14px;
+  border: 2px solid #5a8aaa;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.radio-row.checked .radio-outer { border-color: #0077aa; }
+
+.radio-inner {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #0077aa;
+  display: none;
+}
+
+.radio-row.checked .radio-inner { display: block; }
+
+.radio-text { color: #0a2030; font-size: 12px; }
+.radio-row.disabled .radio-text { color: #aac4d0; }
+
+.field-label {
+  color: #0a2030;
+  font-size: 12px;
+  margin-bottom: 5px;
+}
+
+.field-row {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid #7ab8d4;
+  background: #e4f2f8;
+  margin-bottom: 10px;
+  height: 38px;
+}
+
+.field-row input[type="text"] {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #0a2030;
+  font-family: 'Determination', monospace;
+  font-size: 11px;
+  padding: 0 10px;
+}
+
+.field-row input[type="text"]::placeholder { color: #5a8aaa; }
+
+.browse-btn {
+  background: #cce4f0;
+  border: none;
+  border-left: 1px solid #7ab8d4;
+  color: #0a2030;
+  font-family: 'Determination', monospace;
+  font-size: 11px;
+  padding: 0 14px;
+  cursor: pointer;
+  transition: background .15s;
+}
+
+.browse-btn:hover { background: #aad2e8; color: #0077aa; }
+
+input[type="file"] { display: none; }
+
+.patch-btn {
+  width: 100%;
+  padding: 12px;
+  background: #0077aa;
+  border: none;
+  color: #ffffff;
+  font-family: 'Determination', monospace;
+  font-size: 15px;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: background .15s;
+  margin: 4px 0 8px;
+}
+
+.patch-btn:hover { background: #0099cc; }
+.patch-btn:disabled { background: #b8d4e0; color: #7aa0b4; cursor: not-allowed; }
+
+.progress-area {
+  display: none;
+  border: 1px solid #7ab8d4;
+  background: #e4f2f8;
+  padding: 12px 14px;
+  margin: 6px 0;
+}
+
+.progress-area.visible { display: block; }
+
+.progress-title {
+  color: #0077aa;
+  font-size: 13px;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.progress-track {
+  width: 100%;
+  height: 20px;
+  background: #c8e0ec;
+  border: 1px solid #7ab8d4;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #0077aa, #00aadd);
+  width: 0%;
+  transition: width .3s ease;
+}
+
+.progress-pct {
+  color: #5a8aaa;
+  font-size: 10px;
+  text-align: center;
+  margin-top: 6px;
+  letter-spacing: 1px;
+}
+
+.complete-area {
+  display: none;
+  border: 2px solid #007a3d;
+  background: #d4f0e2;
+  padding: 14px;
+  margin: 6px 0;
+  text-align: center;
+}
+
+.complete-area.visible { display: block; animation: popIn .3s ease; }
+
+@keyframes popIn {
+  from { opacity: 0; transform: scale(.97); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.complete-title { color: #007a3d; font-size: 15px; letter-spacing: 1px; margin-bottom: 6px; }
+.complete-sub   { color: #0a2030; font-size: 11px; line-height: 1.6; }
+
+.statusbar {
+  border-top: 1px solid #aac8da;
+  padding: 5px 12px;
+  color: #5a8aaa;
+  font-size: 10px;
+  letter-spacing: .5px;
+  min-height: 24px;
+}
+
+.overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(100, 160, 200, 0.5);
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.overlay.visible { display: flex; }
+
+.dialog {
+  width: 420px;
+  background: #f0f8fc;
+  border: 2px solid #7ab8d4;
+  box-shadow: 0 4px 24px rgba(0, 80, 140, 0.2);
+  animation: slideDialog .2s ease;
+}
+
+@keyframes slideDialog {
+  from { transform: translateY(-10px); opacity: 0; }
+  to   { transform: translateY(0);     opacity: 1; }
+}
+
+.dialog-titlebar {
+  background: #c8dcea;
+  border-bottom: 2px solid #7ab8d4;
+  padding: 7px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dialog-title-label {
+  flex: 1;
+  text-align: center;
+  color: #4a7a9a;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+}
+
+.dialog-body { padding: 18px 20px 14px; }
+
+.dialog-msg {
+  color: #0a2030;
+  font-size: 12px;
+  line-height: 1.8;
+  margin-bottom: 16px;
+  white-space: pre-line;
+}
+
+.dialog-btns { display: flex; gap: 8px; justify-content: flex-end; }
+
+.dialog-btn {
+  background: #cce4f0;
+  border: 1px solid #7ab8d4;
+  color: #0a2030;
+  font-family: 'Determination', monospace;
+  font-size: 11px;
+  padding: 7px 18px;
+  cursor: pointer;
+  transition: background .15s;
+}
+
+.dialog-btn:hover { background: #aad2e8; }
+.dialog-btn.yes   { background: #d4eaf6; border-color: #0077aa; color: #0077aa; }
+.dialog-btn.yes:hover { background: #b8d8f0; }
+</style>
+</head>
+<body>
+
+<div class="window">
+
+  <div class="titlebar">
+    <div class="dots">
+      <div class="dot dot-r"></div>
+      <div class="dot dot-y"></div>
+      <div class="dot dot-g"></div>
+    </div>
+    <div class="titlebar-label">Project Echo Patcher</div>
+  </div>
+
+  <img class="header-img"
+       src="https://github.com/projectechou/projectechou.github.io/blob/main/projectechopatcher.png?raw=true"
+       alt="Project Echo Patcher">
+
+  <div class="version-row">v1.00</div>
+
+  <div class="body">
+
+    <div class="selectors">
+      <div class="sel-group">
+        <div class="sel-label">What will you patch?</div>
+        <div class="radio-row disabled">
+          <div class="radio-outer"><div class="radio-inner"></div></div>
+          <span class="radio-text">Undertale</span>
+        </div>
+        <div class="radio-row checked">
+          <div class="radio-outer"><div class="radio-inner"></div></div>
+          <span class="radio-text">Deltarune</span>
+        </div>
+      </div>
+      <div class="sel-group" style="text-align: right;">
+        <div class="sel-label">Platform</div>
+        <div class="radio-row disabled" style="justify-content: flex-end;">
+          <span class="radio-text">Wii U</span>
+          <div class="radio-outer"><div class="radio-inner"></div></div>
+        </div>
+        <div class="radio-row checked" style="justify-content: flex-end;">
+          <span class="radio-text">3DS</span>
+          <div class="radio-outer"><div class="radio-inner"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sep"></div>
+
+    <div style="color: #5a8aaa; font-size: 10px; margin-bottom: 8px;">Note: Undertale patching and Wii U support are not available yet.</div>
+    <div class="field-label" style="color: #5a8aaa; font-size: 10px; margin-top: -3px; margin-bottom: 5px;">Must be a Deltarune Chapter 1 data.win from the latest version. Other versions may not patch correctly.</div>
+    <div class="field-row">
+      <input type="text" id="datawinPath" placeholder="Select your data.win file..." readonly>
+      <button class="browse-btn" onclick="document.getElementById('datawinFile').click()">Browse</button>
+      <input type="file" id="datawinFile" onchange="handleDatawin(this)">
+    </div>
+
+    <div class="field-label">Output folder</div>
+    <div class="field-row">
+      <input type="text" id="outputPath" placeholder="Your Downloads folder (browser default)" readonly>
+      <button class="browse-btn" onclick="showOutputNote()">Info</button>
+    </div>
+
+    <div class="sep"></div>
+
+    <button class="patch-btn" id="patchBtn" onclick="startPatch()">Patch!</button>
+
+    <div class="progress-area" id="progressArea">
+      <div class="progress-title">Patching...</div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <div class="progress-pct" id="progressPct">0% Complete. Pls wait</div>
+    </div>
+
+    <div class="complete-area" id="completeArea">
+      <div class="complete-title">Patching Complete!</div>
+      <div class="complete-sub">You should see the .CIA in your Downloads folder.</div>
+    </div>
+
+  </div>
+
+  <div class="statusbar" id="statusBar">Ready.</div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="dialog">
+    <div class="dialog-titlebar">
+      <div class="dots">
+        <div class="dot dot-r"></div>
+        <div class="dot dot-y"></div>
+        <div class="dot dot-g"></div>
+      </div>
+      <div class="dialog-title-label" id="dialogTitle">Confirm</div>
+    </div>
+    <div class="dialog-body">
+      <div class="dialog-msg" id="dialogMsg"></div>
+      <div class="dialog-btns" id="dialogBtns"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const CIA_URL = 'https://files.catbox.moe/fns9z4.cia';
+let datawinFile = null;
+
+function handleDatawin(input) {
+  if (input.files && input.files[0]) {
+    datawinFile = input.files[0];
+    document.getElementById('datawinPath').value = datawinFile.name;
+    setStatus('data.win loaded: ' + datawinFile.name);
+  }
+}
+
+function showOutputNote() {
+  showDialog('Output Folder', 'Since this runs in a browser, downloaded files\nwill go to your default Downloads folder.\n\nYou can move the .CIA file afterward.', [
+    { label: 'OK', cls: 'yes', action: closeDialog }
+  ]);
+}
+
+function setStatus(msg) {
+  document.getElementById('statusBar').textContent = msg;
+}
+
+function showDialog(title, msg, buttons) {
+  document.getElementById('dialogTitle').textContent = title;
+  document.getElementById('dialogMsg').textContent = msg;
+  const btns = document.getElementById('dialogBtns');
+  btns.innerHTML = '';
+  buttons.forEach(function(b) {
+    const el = document.createElement('button');
+    el.className = 'dialog-btn ' + (b.cls || '');
+    el.textContent = b.label;
+    el.onclick = b.action;
+    btns.appendChild(el);
+  });
+  document.getElementById('overlay').classList.add('visible');
+}
+
+function closeDialog() {
+  document.getElementById('overlay').classList.remove('visible');
+}
+
+function startPatch() {
+  if (!datawinFile) {
+    showDialog('Missing File', 'Please select your data.win file first.', [
+      { label: 'OK', cls: 'yes', action: closeDialog }
+    ]);
+    return;
+  }
+
+  const name = datawinFile.name.toLowerCase();
+  const msg = (name === 'data.win')
+    ? 'You have selected:\n  ' + datawinFile.name + '\n\nIs this your Deltarune data.win file?'
+    : 'The selected file is named:\n  ' + datawinFile.name + '\n\nIt does not look like a data.win file.\nAre you sure this is correct?';
+
+  showDialog('Confirm data.win', msg, [
+    { label: 'No',  cls: '',    action: closeDialog },
+    { label: 'Yes', cls: 'yes', action: function() { closeDialog(); runDownload(); } }
+  ]);
+}
+
+function runDownload() {
+  const btn = document.getElementById('patchBtn');
+  btn.disabled = true;
+
+  document.getElementById('progressArea').classList.add('visible');
+  document.getElementById('completeArea').classList.remove('visible');
+  setProgress(0);
+  setStatus('Downloading .CIA from catbox.moe...');
+
+  const xhr = new XMLHttpRequest();
+  xhr.open('GET', CIA_URL, true);
+  xhr.responseType = 'blob';
+
+  xhr.onprogress = function(e) {
+    if (e.lengthComputable) {
+      const pct = Math.round(e.loaded / e.total * 100);
+      setProgress(pct);
+      setStatus('Downloading... ' + pct + '%');
+    }
+  };
+
+  xhr.onload = function() {
+    if (xhr.status === 200) {
+      setProgress(100);
+      const url = URL.createObjectURL(xhr.response);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'ProjectEcho.cia';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function() { URL.revokeObjectURL(url); }, 5000);
+      setTimeout(function() {
+        document.getElementById('progressArea').classList.remove('visible');
+        document.getElementById('completeArea').classList.add('visible');
+        setStatus('Done! ProjectEcho.cia saved to your Downloads folder.');
+        btn.disabled = false;
+      }, 400);
+    } else {
+      onError('Server returned status ' + xhr.status);
+    }
+  };
+
+  xhr.onerror = function() {
+    onError('Network error. Check your connection and try again.');
+  };
+
+  xhr.send();
+}
+
+function setProgress(pct) {
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressPct').textContent = pct + '% Complete. Pls wait';
+}
+
+function onError(msg) {
+  document.getElementById('progressArea').classList.remove('visible');
+  document.getElementById('patchBtn').disabled = false;
+  setStatus('Error: ' + msg);
+  showDialog('Download Failed', 'Something went wrong:\n\n' + msg, [
+    { label: 'OK', cls: 'yes', action: closeDialog }
+  ]);
+}
+</script>
+</body>
+</html>
