@@ -1,6 +1,6 @@
 @font-face {
   font-family: 'Determination';
-  src: url('https://cdn.jsdelivr.net/gh/projectechou/projectechou.github.io@main/determination.ttf') format('truetype');
+  src: url('../assets/fonts/determination.ttf') format('truetype');
   font-display: swap;
 }
 
